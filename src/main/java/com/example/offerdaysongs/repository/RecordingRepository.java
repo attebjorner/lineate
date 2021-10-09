@@ -15,4 +15,7 @@ public interface RecordingRepository extends JpaRepository<Recording, Long>, Jpa
     @Query("FROM Recording WHERE releaseTime BETWEEN :startDate AND :endDate")
     List<Recording> findAllByReleaseTimeBetween(@Param("startDate") ZonedDateTime startDate,
                                                 @Param("endDate") ZonedDateTime endDate);
+
+    @Query("SELECT DISTINCT r FROM Company c JOIN c.recordings r where c.name = :name order by r.title")
+    List<Recording> findAllByCompanyName(@Param("name") String name);
 }

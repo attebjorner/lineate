@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,14 @@ public class RecordingService {
             throw new RuntimeException(String.format(NOT_FOUND, id));
         }
         recordingRepository.deleteById(id);
+    }
+
+    public List<Recording> getByReleaseTimeRange(ZonedDateTime start, ZonedDateTime end) {
+        return recordingRepository.findAllByReleaseTimeBetween(start, end);
+    }
+
+    public List<Recording> getByCompanyName(String name) {
+        return recordingRepository.findAllByCompanyName(name);
     }
 
     private Recording convertRequestToRecording(CreateRecordingRequest request) {

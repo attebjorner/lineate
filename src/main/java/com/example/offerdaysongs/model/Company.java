@@ -2,10 +2,9 @@ package com.example.offerdaysongs.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -14,4 +13,15 @@ public class Company implements NonNullPropertiesCopyable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
+
+    @ManyToMany(
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST,
+                    CascadeType.PERSIST, CascadeType.REFRESH}
+    )
+    @JoinTable(
+            name = "company_recording",
+            joinColumns = @JoinColumn(name = "company_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "recording_id", nullable = false)
+    )
+    List<Recording> recordings;
 }

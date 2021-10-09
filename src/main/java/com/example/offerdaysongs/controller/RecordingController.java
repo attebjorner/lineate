@@ -8,10 +8,14 @@ import com.example.offerdaysongs.dto.requests.CreateRecordingRequest;
 import com.example.offerdaysongs.model.Recording;
 import com.example.offerdaysongs.service.RecordingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @RestController
 @RequestMapping("/api/recordings")
@@ -57,6 +61,21 @@ public class RecordingController {
     @DeleteMapping("/{id:[\\d]+}")
     public void delete(@PathVariable(ID) long id) {
         recordingService.delete(id);
+    }
+
+    @GetMapping("/release_time")
+    public List<RecordingDto> getByReleaseTime(@RequestParam("start") @DateTimeFormat(iso = ISO.DATE_TIME) ZonedDateTime start,
+                                               @RequestParam("end") @DateTimeFormat(iso = ISO.DATE_TIME) ZonedDateTime end) {
+        return recordingService.getByReleaseTimeRange(start, end).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/company")
+    public List<RecordingDto> getByCompanyName(@RequestParam("name") String name) {
+        return recordingService.getByCompanyName(name).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     private RecordingDto convertToDto(Recording recording) {

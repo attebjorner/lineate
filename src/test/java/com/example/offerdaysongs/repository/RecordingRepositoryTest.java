@@ -1,5 +1,6 @@
 package com.example.offerdaysongs.repository;
 
+import com.example.offerdaysongs.model.Company;
 import com.example.offerdaysongs.model.Recording;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,20 @@ class RecordingRepositoryTest {
 
     @Test
     void itShouldFindByReleaseTimeBetween() {
+
         var start = ZonedDateTime.now().withYear(1980);
         var end = ZonedDateTime.now().withYear(1995);
 
         List<Recording> expected = underTest.findAllByReleaseTimeBetween(start, end);
         assertThat(expected.size()).isEqualTo(2);
+    }
+
+    @Test
+    void isShouldFindByCompanyName() {
+
+        var companyName = "The best company";
+
+        List<Recording> expected = underTest.findAllByCompanyName(companyName);
+        assertThat(expected.size()).isEqualTo(1);
     }
 }
