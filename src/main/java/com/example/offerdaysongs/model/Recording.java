@@ -1,7 +1,7 @@
 package com.example.offerdaysongs.model;
 
 import liquibase.pro.packaged.E;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,8 +15,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class Recording {
+public class Recording implements NonNullPropertiesCopyable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

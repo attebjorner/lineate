@@ -8,12 +8,8 @@ import com.example.offerdaysongs.model.Company;
 import com.example.offerdaysongs.model.Singer;
 import com.example.offerdaysongs.service.CompanyService;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +20,7 @@ public class CompanyController {
     private static final String ID = "id";
     private final CompanyService companyService;
 
+    @Autowired
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
@@ -46,9 +43,25 @@ public class CompanyController {
         return convertToDto(companyService.create(request));
     }
 
+    @PutMapping("/{id:[\\d]+}")
+    public CompanyDto update(@PathVariable(ID) long id,
+                             @RequestBody CreateCompanyRequest request) {
+        return convertToDto(companyService.update(id, request));
+    }
+
+    @PatchMapping("/{id:[\\d]+}")
+    public CompanyDto edit(@PathVariable(ID) long id,
+                           @RequestBody CreateCompanyRequest request) {
+        return convertToDto(companyService.edit(id, request));
+    }
+
+    @DeleteMapping("/{id:[\\d]+}")
+    public void delete(@PathVariable(ID) long id) {
+        companyService.delete(id);
+    }
 
     private CompanyDto convertToDto(Company company){
         return new CompanyDto(company.getId(), company.getName());
-     }
+    }
 
 }
