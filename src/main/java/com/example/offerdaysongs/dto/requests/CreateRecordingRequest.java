@@ -7,7 +7,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
-public class CreateRecordingRequest {
+public class CreateRecordingRequest
+{
     String title;
     String version;
     ZonedDateTime releaseTime;

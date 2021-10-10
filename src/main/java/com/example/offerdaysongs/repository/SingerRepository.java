@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface SingerRepository extends JpaRepository<Singer, Long>, JpaSpecificationExecutor<Singer> {
+public interface SingerRepository extends JpaRepository<Singer, Long>, JpaSpecificationExecutor<Singer>
+{
 }

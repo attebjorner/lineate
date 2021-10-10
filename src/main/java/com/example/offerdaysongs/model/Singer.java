@@ -9,7 +9,8 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Singer implements NonNullPropertiesCopyable {
+public class Singer implements NonNullPropertiesCopyable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

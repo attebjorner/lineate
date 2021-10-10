@@ -1,8 +1,7 @@
 package com.example.offerdaysongs.service;
 
-import com.example.offerdaysongs.dto.requests.CreateCompanyRequest;
 import com.example.offerdaysongs.dto.requests.CreateSingerRequest;
-import com.example.offerdaysongs.model.Company;
+import com.example.offerdaysongs.exceptions.NoContentException;
 import com.example.offerdaysongs.model.Singer;
 import com.example.offerdaysongs.repository.SingerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SingerService {
+public class SingerService
+{
     private static final String NOT_FOUND = "Singer with id %d not found";
     private final SingerRepository singerRepository;
 
@@ -29,18 +29,25 @@ public class SingerService {
 
     public Singer getById(long id)
     {
+        if (!singerRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
+        }
         return singerRepository.getById(id);
     }
 
-    public Singer create(CreateSingerRequest request) {
+    public Singer create(CreateSingerRequest request)
+    {
         Singer singer = new Singer();
         singer.setName(request.getName());
         return singerRepository.save(singer);
     }
 
-    public Singer update(long id, CreateSingerRequest request) {
-        if (!singerRepository.existsById(id)) {
-            throw new RuntimeException(String.format(NOT_FOUND, id));
+    public Singer update(long id, CreateSingerRequest request)
+    {
+        if (!singerRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
         }
         var singer = new Singer();
         singer.setId(id);
@@ -48,10 +55,12 @@ public class SingerService {
         return singerRepository.save(singer);
     }
 
-    public Singer edit(long id, CreateSingerRequest request) {
+    public Singer edit(long id, CreateSingerRequest request)
+    {
         Optional<Singer> singer = singerRepository.findById(id);
-        if (singer.isEmpty()) {
-            throw new RuntimeException(String.format(NOT_FOUND, id));
+        if (singer.isEmpty())
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
         }
         var newSingerData = new Singer();
         newSingerData.setName(request.getName());
@@ -59,9 +68,11 @@ public class SingerService {
         return singerRepository.save(singer.get());
     }
 
-    public void delete(long id) {
-        if (!singerRepository.existsById(id)) {
-            throw new RuntimeException(String.format(NOT_FOUND, id));
+    public void delete(long id)
+    {
+        if (!singerRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
         }
         singerRepository.deleteById(id);
     }

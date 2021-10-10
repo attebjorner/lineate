@@ -12,7 +12,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RecordingDto {
+public class RecordingDto
+{
     long id;
     String title;
     String version;

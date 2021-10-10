@@ -8,7 +8,8 @@ import java.util.Set;
 
 @Data
 @Entity
-public class Company implements NonNullPropertiesCopyable {
+public class Company implements NonNullPropertiesCopyable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -24,4 +25,6 @@ public class Company implements NonNullPropertiesCopyable {
             inverseJoinColumns = @JoinColumn(name = "recording_id", nullable = false)
     )
     List<Recording> recordings;
+    @Column(name = "recording_price")
+    Integer recordingPrice;
 }

@@ -1,8 +1,7 @@
 package com.example.offerdaysongs.service;
 
-import com.example.offerdaysongs.dto.requests.CreateCompanyRequest;
 import com.example.offerdaysongs.dto.requests.CreateRecordingRequest;
-import com.example.offerdaysongs.model.Company;
+import com.example.offerdaysongs.exceptions.NoContentException;
 import com.example.offerdaysongs.model.Recording;
 import com.example.offerdaysongs.model.Singer;
 import com.example.offerdaysongs.repository.RecordingRepository;
@@ -16,70 +15,98 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RecordingService {
+public class RecordingService
+{
     private static final String NOT_FOUND = "Recording with id %d not found";
     private final RecordingRepository recordingRepository;
     private final SingerRepository singerRepository;
 
     @Autowired
     public RecordingService(RecordingRepository recordingRepository,
-                            SingerRepository singerRepository) {
+                            SingerRepository singerRepository)
+    {
         this.recordingRepository = recordingRepository;
         this.singerRepository = singerRepository;
     }
 
-    public List<Recording> getAll() {
+    public List<Recording> getAll()
+    {
         return recordingRepository.findAll();
     }
 
-    public Recording getById(long id) {
+    public Recording getById(long id)
+    {
+        if (!recordingRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
+        }
         return recordingRepository.getById(id);
     }
 
     @Transactional
-    public Recording create(CreateRecordingRequest request) {
+    public Recording create(CreateRecordingRequest request)
+    {
         var recording = convertRequestToRecording(request);
         return recordingRepository.save(recording);
     }
 
-    public Recording update(long id, CreateRecordingRequest request) {
-        if (!recordingRepository.existsById(id)) {
-            throw new RuntimeException(String.format(NOT_FOUND, id));
+    public Recording update(long id, CreateRecordingRequest request)
+    {
+        if (!recordingRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
         }
         var recording = convertRequestToRecording(id, request);
         return recordingRepository.save(recording);
     }
 
-    public Recording edit(long id, CreateRecordingRequest request) {
+    public Recording edit(long id, CreateRecordingRequest request)
+    {
         Optional<Recording> recording = recordingRepository.findById(id);
-        if (recording.isEmpty()) {
-            throw new RuntimeException(String.format(NOT_FOUND, id));
+        if (recording.isEmpty())
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
         }
         var newRecordingData = convertRequestToRecording(id, request);
         recording.get().copyNonNullProperties(newRecordingData);
         return recordingRepository.save(recording.get());
     }
 
-    public void delete(long id) {
-        if (!recordingRepository.existsById(id)) {
-            throw new RuntimeException(String.format(NOT_FOUND, id));
+    public void delete(long id)
+    {
+        if (!recordingRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
         }
         recordingRepository.deleteById(id);
     }
 
-    public List<Recording> getByReleaseTimeRange(ZonedDateTime start, ZonedDateTime end) {
+    public List<Recording> getByReleaseTimeRange(ZonedDateTime start, ZonedDateTime end)
+    {
         return recordingRepository.findAllByReleaseTimeBetween(start, end);
     }
 
-    public List<Recording> getByCompanyName(String name) {
+    public List<Recording> getByCompanyName(String name)
+    {
         return recordingRepository.findAllByCompanyName(name);
     }
 
-    private Recording convertRequestToRecording(CreateRecordingRequest request) {
+    public int getRecordingPrice(long id)
+    {
+        if (!recordingRepository.existsById(id))
+        {
+            throw new NoContentException(String.format(NOT_FOUND, id));
+        }
+        return recordingRepository.getMinPriceByRecording(id);
+    }
+
+    private Recording convertRequestToRecording(CreateRecordingRequest request)
+    {
         return convertRequestToRecording(null, request);
     }
 
-    private Recording convertRequestToRecording(Long id, CreateRecordingRequest request) {
+    private Recording convertRequestToRecording(Long id, CreateRecordingRequest request)
+    {
         var recording = Recording.builder()
                 .id(id)
                 .title(request.getTitle())
@@ -87,8 +114,10 @@ public class RecordingService {
                 .releaseTime(request.getReleaseTime())
                 .build();
         var singerDto = request.getSinger();
-        if (singerDto != null) {
-            var singer = singerRepository.findById(singerDto.getId()).orElseGet(() -> {
+        if (singerDto != null)
+        {
+            var singer = singerRepository.findById(singerDto.getId()).orElseGet(() ->
+            {
                 var temp = new Singer();
                 temp.setName(singerDto.getName());
                 return singerRepository.save(temp);
